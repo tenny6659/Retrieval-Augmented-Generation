@@ -11,7 +11,7 @@ chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
 
 collection = chroma_client.get_or_create_collection(name="growing_vegetables")
 
-# loading the document
+# loading the document  
 
 loader = PyPDFDirectoryLoader(DATA_PATH)
 

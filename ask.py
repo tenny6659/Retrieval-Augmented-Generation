@@ -11,7 +11,13 @@ CHROMA_PATH = r"chroma_db"
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
 
-collection = chroma_client.get_or_create_collection(name="growing_vegetables")
+collection = chroma_client.get_or_create_collection(
+    name="growing_vegetables",
+    metadata={"hnsw:space": "cosine"},
+    embedding_function=None,
+    configuration={"hnsw:ef_construction": 200, "hnsw:M": 16, "num_threads": 2}
+)
+
 
 
 user_query = input("What do you want to know about growing vegetables?\n\n")
