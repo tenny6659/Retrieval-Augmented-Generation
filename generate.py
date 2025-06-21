@@ -1,0 +1,1 @@
+ Composting is not directly provided in the data. However, it's a process of recycling organic waste materials (such as food scraps and yard waste) into a valuable soil amendment known as compost. This process helps reduce waste sent to landfills, enriches soil, and can help plants grow better by improving their structure and fertility.

@@ -1,4 +1,6 @@
 from langchain_community.document_loaders import PyPDFDirectoryLoader
+
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import chromadb
 
@@ -8,8 +10,11 @@ DATA_PATH = r"data"
 CHROMA_PATH = r"chroma_db"
 
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
+collection = chroma_client.get_or_create_collection(
+    name="growing_vegetables"
+)
 
-collection = chroma_client.get_or_create_collection(name="growing_vegetables")
+#collection = chroma_client.get_or_create_collection(name="growing_vegetables")
 
 # loading the document  
 
