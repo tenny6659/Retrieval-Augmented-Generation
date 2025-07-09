@@ -5,10 +5,12 @@ from src.components.chunking import semantic_chunking
 import os
 from config.settings import settings
 import re
+import ast
 
 class SASConverter:
     def __init__(self):
         self.llm = LLMHandler()
+        self.retry_count = 0
 
     def convert_file(self, input_path: str, output_path: str):
         sas_code = read_file(input_path)
@@ -19,9 +21,28 @@ class SASConverter:
         else:
             python_code = self.llm.convert(sas_code, emotive_prompt_template if settings.emotive_prompting else prompt_template)
             write_file(output_path, python_code)
+            syntax = self.check_syntax(output_path)
+            if syntax:
+                return
+            else:
+                self.convert_file(input_path, output_path)
+
+    def check_syntax(self, output_path: str):
+        if self.retry_count < 5:
+            with open(output_path, "r", encoding="utf-8") as f:
+                try:
+                    parser = ast.parse(f.read(), output_path)
+                except:
+                    print("Error when parsing compiled code trying again.")
+                    self.retry_count += 1
+                    return False
+            return True
+        else:
+            raise Exception("Attempted to convert code 5 times but failed. Syntax errors keep occuring")
 
     def convert_multiple_files(self, input_files: list[str], output_base_dir: str):
         output_dir = create_dated_folder(output_base_dir)
+        self.retry_count = 0
         for file_path in input_files:
             filename = os.path.basename(file_path).replace(".sas", ".py")
             output_path = os.path.join(output_dir, filename)
@@ -43,3 +64,8 @@ class SASConverter:
                 combined_code += converted_code
         
         write_file(output_path, combined_code)
+        syntax = self.check_syntax(output_path)
+        if syntax:
+            return
+        else:
+            self.convert_chunks(chunks, output_path)
